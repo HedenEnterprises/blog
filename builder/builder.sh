@@ -51,6 +51,10 @@ if [ -f "/posts.md5" ]; then
         echo " > New: ${md5new}"
         exit 0
     fi
+
+# if we don't, we need one
+else
+    bash ./builder/md5-dir.sh
 fi
 
 

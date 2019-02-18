@@ -10,4 +10,4 @@ addons:
 
 script:
   - ./builder/builder.sh
-  - find .
+  - find . | grep -v "\.git"
