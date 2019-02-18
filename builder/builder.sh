@@ -189,4 +189,4 @@ git remote add origin https://hedenface:${token}@github.com/HedenEnterprises/blo
 
 # commit with our special message
 git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
-git push origin master --quiet >/dev/null 2>&1
+git push origin master 
