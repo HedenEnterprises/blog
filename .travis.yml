@@ -14,3 +14,4 @@ script:
 before_install:
 - openssl aes-256-cbc -K $encrypted_707d7b8ddfbe_key -iv $encrypted_707d7b8ddfbe_iv -in hedenenterprises_travis.enc -out hedenenterprises_travis -d
 - cp hedenenterprises_travis ~/.ssh/id_rsa
+- echo -e "Host github.com\n\tHostName github.com\n\tUser git\n\tIdentityFile ~/.ssh/id_rsa\n" >> ~/.ssh/config
