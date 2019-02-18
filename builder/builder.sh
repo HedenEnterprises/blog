@@ -184,8 +184,7 @@ git remote add origin https://hedenface:${token}@github.com/HedenEnterprises/blo
 
 
 # now add all the stuff we care about
-git add posts.md5
-git add published/
+git add -f posts.md5 published/
 
 git status
 
