@@ -177,14 +177,15 @@ git config --global user.email "travis@travis-ci.org"
 git config --global user.name  "Travis CI"
 
 
-# now add all the stuff we care about
-git add posts.md5
-git add published/
-
-
 # now do some fancy stuff and reset our origin to use our gh access token
 git remote rm origin
 git remote add origin https://hedenface:${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
+
+
+
+# now add all the stuff we care about
+git add posts.md5
+git add published/
 
 git status
 
