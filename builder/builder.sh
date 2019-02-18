@@ -1,7 +1,5 @@
 #!/bin/bash
 
-TRAVIS_COMMIT_MESSAGE="something that doesnt start with published:"
-
 
 # processing tool options
 opts_markdown=""
@@ -174,4 +172,14 @@ done
 rm "${varfile}"
 
 
-git status
+# who is travis, really?
+git config --global user.email   "travis@travis-ci.org"
+git config --global user.name    "Travis CI"
+
+
+# now add all the stuff we care about
+git add posts.md5
+git add published/
+
+git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
+git push -u origin master
