@@ -173,8 +173,9 @@ rm "${varfile}"
 
 
 # who is travis, really?
-git config --global user.email   "travis@travis-ci.org"
-git config --global user.name    "Travis CI"
+git config --global user.email      "travis@travis-ci.org"
+git config --global user.name       "Travis CI"
+git config --global core.sshCommand "ssh -i hedenenterprises_travis"
 
 
 # now add all the stuff we care about
@@ -183,3 +184,10 @@ git add published/
 
 git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
 git push -u origin master
+
+
+# the git stuff is made possible by the good folks at travis
+# the following command has helped a lot:
+#
+# $ travis encrypt-file ~/.ssh/hedenenterprises_travis --add
+#
