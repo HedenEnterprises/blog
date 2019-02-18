@@ -1,0 +1,8 @@
+#!/bin/bash
+
+basedir=$(dirname $(readlink -f $0))
+precommit="${basedir}/../../builder/pre-commit.sh"
+
+if [ -f $precommit ]; then
+    bash $precommit
+fi

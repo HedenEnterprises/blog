@@ -66,13 +66,8 @@ fi
 
 
 # grab any template variables from header/footer (e.g.: %%%{TITLE})
-cat "${header}" | grep "%%%{" | sed 's/.*%%%{//;s/}.*//' >> "${varfile}"
-cat "${footer}" | grep "%%%{" | sed 's/.*%%%{//;s/}.*//' >> "${varfile}"
-
-
-# get rid of duplicates
-cat "${varfile}" | sort | uniq > "${varfile}.tmp"
-mv "${varfile}.tmp" "${varfile}"
+./builder/template-vars.sh "${header}" >> "${varfile}"
+./builder/template-vars.sh "${footer}" >> "${varfile}"
 
 
 # process files
