@@ -25,15 +25,6 @@ if [ "x$TRAVIS_COMMIT_MESSAGE" = "x" ]; then
 fi
 
 
-# this build was spawned by travis committing after processing
-# we can ignore it
-if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^published:.* ]]; then
-    echo "Ignoring messages that start with \"published:\""
-    echo " > Message: $TRAVIS_COMMIT_MESSAGE"
-    exit 0
-fi
-
-
 # check if we have a current md5 of our posts file
 # if we don't it forces a complete rebuild (e.g.: new template files)
 if [ -f "/posts.md5" ]; then
@@ -193,7 +184,7 @@ git status
 
 
 # commit with our special message
-git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
+git commit -m "[skip ci] ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
 
 if git push origin master --quiet >/dev/null 2>&1; then
     echo "git push successful!"
