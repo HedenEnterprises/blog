@@ -186,7 +186,9 @@ git add published/
 git remote rm origin
 git remote add origin https://hedenface:${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
 
+git status
+
 
 # commit with our special message
-git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
-git push origin master 
+git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}" --verbose
+git push origin master --verbose
