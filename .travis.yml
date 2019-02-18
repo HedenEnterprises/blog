@@ -1,0 +1,12 @@
+language: minimal
+
+sudo: true
+
+addons:
+  apt:
+    packages:
+      - tidy
+      - markdown
+
+script:
+  - ./builder/builder.sh
