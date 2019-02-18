@@ -190,5 +190,9 @@ git status
 
 
 # commit with our special message
-git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}" --verbose
+git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
+
+
+git status
+
 git push origin master --verbose
