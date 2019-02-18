@@ -30,7 +30,7 @@ fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^published:.* ]]; then
     echo "Ignoring messages that start with \"published:\""
     echo " > Message: $TRAVIS_COMMIT_MESSAGE"
-    exit 1
+    exit 0
 fi
 
 
@@ -47,13 +47,17 @@ if [ -f "/posts.md5" ]; then
         echo "Ignoring commit because old md5 matches new md5 of posts directory"
         echo " > Old: ${md5old}"
         echo " > New: ${md5new}"
-        exit 1
+        exit 0
     fi
 
 # if we don't, we need one
 else
     bash ./builder/md5-dir.sh
 fi
+
+
+# wipe out the published/ dir
+rm -rf published/*
 
 
 # create appropriate directories in published/ directory
@@ -182,18 +186,15 @@ git remote rm origin
 git remote add origin https://${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
 
 
-
 # now add all the stuff we care about
 git checkout master
 git add -f posts.md5 published/
-
 git status
 
 
 # commit with our special message
 git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
 
-
-git status
-
-git push origin master --verbose
+if git push origin master --quiet >/dev/null 2>&1; then
+    echo "git push successful!"
+fi
