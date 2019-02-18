@@ -30,7 +30,7 @@ fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^published:.* ]]; then
     echo "Ignoring messages that start with \"published:\""
     echo " > Message: $TRAVIS_COMMIT_MESSAGE"
-    exit 0
+    exit 1
 fi
 
 
@@ -47,7 +47,7 @@ if [ -f "/posts.md5" ]; then
         echo "Ignoring commit because old md5 matches new md5 of posts directory"
         echo " > Old: ${md5old}"
         echo " > New: ${md5new}"
-        exit 0
+        exit 1
     fi
 
 # if we don't, we need one
@@ -173,21 +173,20 @@ rm "${varfile}"
 
 
 # who is travis, really?
-git config --global user.email      "travis@travis-ci.org"
-git config --global user.name       "Travis CI"
-git config --global core.sshCommand "ssh -i hedenenterprises_travis"
+git config --global user.email "travis@travis-ci.org"
+git config --global user.name  "Travis CI"
 
 
 # now add all the stuff we care about
 git add posts.md5
 git add published/
 
+
+# now do some fancy stuff and reset our origin to use our gh access token
+git remote rm origin
+git remote add origin https://hedenface:${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
+
+
+# commit with our special message
 git commit -m "published: ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
-git push -u origin master
-
-
-# the git stuff is made possible by the good folks at travis
-# the following command has helped a lot:
-#
-# $ travis encrypt-file ~/.ssh/hedenenterprises_travis --add
-#
+git push origin master --quiet >/dev/null 2>&1
