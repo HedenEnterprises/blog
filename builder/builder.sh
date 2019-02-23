@@ -2,6 +2,7 @@
 
 
 basedir=$(dirname $(readlink -f $0))
+echo "Using basedir: ${basedir}"
 
 
 # processing tool options
