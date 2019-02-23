@@ -97,6 +97,7 @@ if [ ! -d "${clone_target}" ]; then
 
 
     echo " > Directory successfully created!"
+    directory_created=true
 fi
 
 
@@ -135,21 +136,15 @@ pushd "${repo}"
 
 
 # nothing fancy
+bad_fetch=0
 if [ "x$dont_fetch" != "xtrue" ]; then
-    fetched=$(git fetch 2>"${bad_fetch_file}")
+    git fetch 2>"${bad_fetch_file}"
+    bad_fetch=$(echo $?)
 fi
 
 
-# no fetch output? no problem (..no syncing)
-if [ "x$fetched" = "x" ]; then
-    exit 0
-fi
-
-
-if [ -f "${bad_fetch_file}" ]; then
+if [ $bad_fetch -ne 0 ]; then
     echo "Bad fetch detected!"
-    cat "${bad_fetch_file}"
-    rm "${bad_fetch_file}"
     exit 1
 fi
 
