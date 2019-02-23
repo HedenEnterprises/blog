@@ -2,7 +2,10 @@
 
 
 basedir=$(dirname $(readlink -f $0))
-echo "Using basedir: ${basedir}"
+
+
+# get rid of /builder at end of basedir
+basedir=$(echo "${basedir}" | sed 's|/builder$||')
 
 
 # processing tool options
@@ -11,8 +14,8 @@ opts_tidy="-indent --indent-spaces 4 -wrap -1 --doctype omit"
 
 
 # template files
-header="${basedir}/../template/header.html"
-footer="${basedir}/../template/footer.html"
+header="${basedir}/template/header.html"
+footer="${basedir}/template/footer.html"
 
 
 # make sure the template files exist
