@@ -4,7 +4,7 @@
 basedir=$(dirname $(readlink -f $0))
 
 
-script="${basedir}/builder/template_vars.sh"
+script="${basedir}/builder/template-vars.sh"
 
 
 # get all of our existing template vars
