@@ -1,31 +1,18 @@
 #!/bin/bash
 
 
-# normalize our path
-if [ -f ./template-vars.sh ]; then
-    script="./template-vars"
-    t_path="./../"
-elif [ -f ./builder/template-vars.sh ]; then
-    script="./builder/template-vars.sh"
-    t_path="./"
-elif [ -f ./../builder/template-vars.sh ]; then
-    script="./../builder/template-vars.sh"
-    t_path="./../"
-elif [ -f ./../../builder/template-vars.sh ]; then
-    script="./../../builder/template-vars.sh"
-    t_path="./../../"
-else
-    echo "Can't find template-vars.sh script! Check your path? o.o"
-    exit 0
-fi
+basedir=$(dirname $(readlink -f $0))
+
+
+script="${basedir}/builder/template_vars.sh"
 
 
 # get all of our existing template vars
-template_vars=$($script "${t_path}template/header.html" && $script "${t_path}template/footer.html")
+template_vars=$($script "${basedir}/template/header.html" && $script "${basedir}/template/footer.html")
 
 
 # get all markdown files
-files=$(find ${t_path}posts -type f | grep "\.md$")
+files=$(find ${basedir}/posts -type f | grep "\.md$")
 
 
 # loop over template variables

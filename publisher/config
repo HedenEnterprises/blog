@@ -1,0 +1,20 @@
+######################################
+#  configuration file for publisher  #
+######################################
+
+
+# how often to poll the repo (and update)
+# in minutes
+frequency=60
+
+
+# location for repository scratch space
+clone_target=/var/www/publisher/scratch
+
+
+# final destination (web server serving directory)
+target=/var/www/blog/
+
+
+# repo url
+repo_url=https://github.com/HedenEnterprises/blog.git

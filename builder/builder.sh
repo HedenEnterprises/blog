@@ -1,14 +1,17 @@
 #!/bin/bash
 
 
+basedir=$(dirname $(readlink -f $0))
+
+
 # processing tool options
 opts_markdown=""
 opts_tidy="-indent --indent-spaces 4 -wrap -1 --doctype omit"
 
 
 # template files
-header="template/header.html"
-footer="template/footer.html"
+header="${basedir}/template/header.html"
+footer="${basedir}/template/footer.html"
 
 
 # make sure the template files exist
@@ -27,10 +30,10 @@ fi
 
 # check if we have a current md5 of our posts file
 # if we don't it forces a complete rebuild (e.g.: new template files)
-if [ -f "/posts.md5" ]; then
+if [ -f "${basedir}/../posts.md5" ]; then
 
-    md5old=$(cat ./posts.md5)
-    md5new=$(bash ./builder/md5-dir.sh)
+    md5old=$(cat "${basedir}/../posts.md5")
+    md5new=$(bash "${basedir}/md5-dir.sh")
 
     # check if the md5 of the posts/ directory is the same as it has been
     # if it is, then we have nothing to do
@@ -43,23 +46,23 @@ if [ -f "/posts.md5" ]; then
 
 # if we don't, we need one
 else
-    bash ./builder/md5-dir.sh
+    bash "${basedir}/md5-dir.sh"
 fi
 
 
 # wipe out the published/ dir
-rm -rf published/*
+rm -rf "${basedir}/published/*"
 
 
 # create appropriate directories in published/ directory
-dirs=$(find posts -type d | sed 's/^posts/published/')
+dirs=$(find "${basedir}/posts" -type d | sed 's/^posts/published/')
 for dir in $dirs; do
     mkdir -p "${dir}"
 done
 
 
 # see what variables our header/footer requires and store them somewhere
-varfile="template.variables"
+varfile="${basedir}/template.variables"
 if [ -f "${varfile}" ]; then
     rm "${varfile}"
 fi
@@ -71,7 +74,7 @@ fi
 
 
 # process files
-files=$(find posts -type f)
+files=$(find "${basedir}/posts" -type f)
 for source in $files; do
 
     target=$(echo "${source}" | sed 's/^posts/published/' | sed 's/md$/html/')

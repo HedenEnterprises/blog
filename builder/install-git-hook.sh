@@ -1,9 +1,14 @@
 #!/bin/bash
 
-if [ ! -f ./builder/git-pre-commit-hook ]; then
-    echo "Sorry for the inconvienence, please run this from project root"
+
+basedir=$(dirname $(readlink -f $0))
+
+
+if [ ! -f "${basedir}/git-pre-commit-hook" ]; then
+    echo "Can't find ${basedir}/git-pre-commit-hook..."
     exit 1
 fi
 
-cp ./builder/git-pre-commit-hook .git/hooks/pre-commit
-chmod +x .git/hooks/pre-commit
+
+cp "${basedir}/git-pre-commit-hook" "${basedir}/../.git/hooks/pre-commit"
+chmod +x "${basedir}/../.git/hooks/pre-commit"

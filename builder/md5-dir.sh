@@ -4,6 +4,13 @@
 dir=$1
 
 
+# second argument MUST be "false" to avoid writing to a file
+write_file=true
+if [ "x$2" != "x" ]; then
+    write_file="$2"
+fi
+
+
 # if no directory is given, default to the posts/ dir
 if [ "x$dir" = "x" ]; then
     dir="posts/"
@@ -22,4 +29,8 @@ md5=$(md5sum "${md5file}" | awk '{print $1}')
 
 
 echo "${md5}"
-echo "${md5}" > "${md5file}"
+
+
+if [ "x$write_file" != "xfalse" ]; then
+    echo "${md5}" > "${md5file}"
+fi

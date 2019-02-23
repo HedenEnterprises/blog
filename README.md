@@ -1,6 +1,6 @@
 # Heden Enterprises Blog Builder
 
-Simple project for converting markdown posts to published static html pages.
+> Simple project for converting markdown posts to published static html pages.
 
 
 ## What?
@@ -8,11 +8,16 @@ Simple project for converting markdown posts to published static html pages.
 The blog builder project allows me to focus more on creating good content than
 worrying about formatting or writing html for static pages.
 
+Pull requests are welcome.
+
 
 ## Why?
 
 Because I like markdown files. They are easy to read in command line editors
 and desktop editors, even when they are being viewed in the repository online.
+
+Yes, I know there are things out there already that do this. They didn't suit
+my fancy - also I like building things. So I built this thing.
 
 
 ## How?
@@ -48,3 +53,14 @@ Everyone. You're invited to fork or contribute. I'd like to see it being used
 by others at some point. I know there are other things out there that do a
 heck of a lot more than this - but that is kind of the point of keeping this so
 simple.
+
+
+## Anything else?
+
+If you're developing or writing blog posts with this software - you should
+install the git hook. It is a pre-commit hook that checks that all of the
+markdown files for template variable compliance.
+
+```
+bash ./builder/install-git-hook.sh
+```
