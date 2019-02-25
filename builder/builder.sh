@@ -137,60 +137,27 @@ for source in $files; do
 
         done < "${varfile}"
 
-        echo ""
-        echo "****"
-        echo "wtf"
-        git status
-        echo ""
-        echo "****"
-        echo ""
-        echo ""
-
 
         # transfer markdown to html (while pre/app-ending our template data)
         cat "${header}.tmp" > "${source}.tmp"
         markdown $opts_markdown "${source}.stripped" >> "${source}.tmp"
         cat "${footer}.tmp" >> "${source}.tmp"
 
-        echo ""
-        echo "****"
-        echo "wtf"
-        git status
-        echo ""
-        echo "****"
-        echo ""
-        echo ""
 
         # now apply tidy html to it (with our options declared up top)
         cat "${source}.tmp" | tidy $opts_tidy > "${target}.tmp"
 
-        echo ""
-        echo "****"
-        echo "wtf"
-        git status
-        echo ""
-        echo "****"
-        echo ""
-        echo ""
 
         # we have to do this because the version of tidy we use doesn't have
         # the `html5` option :(
         echo "<!DOCTYPE html>" > "${target}"
         cat "${target}.tmp" >> "${target}"
 
-        echo ""
-        echo "****"
-        echo "wtf"
-        git status
-        echo ""
-        echo "****"
-        echo ""
-        echo ""
 
         # now clean up all the tmp files
-        rm "${source}.tmp" "${source}.stripped"
-        rm "${target}.tmp"
-        rm "${header}.tmp" "${footer}.tmp"
+        echo rm "${source}.tmp" "${source}.stripped"
+        echo rm "${target}.tmp"
+        echo rm "${header}.tmp" "${footer}.tmp"
 
 
     # otherwise we just copy it...
