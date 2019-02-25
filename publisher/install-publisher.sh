@@ -19,28 +19,25 @@ echo ""
 sleep 5
 
 
-if ! mkdir -p /var/www/publisher 2>/dev/null; then
+if ! mkdir -p "/var/www/publisher" 2>/dev/null; then
     echo "Can't create directory"
     exit 1
 fi
 
 
-if [ ! -d /etc/cron.d/ ]; then
+if [ ! -d "/etc/cron.d/" ]; then
     echo "No /etc/cron.d directory..."
     exit 1
 fi
 
 
-if [ ! -d /etc/apache2/conf-available ]; then
+if [ ! -d "/etc/apache2/conf-available" ]; then
     echo "No /etc/apache2/conf-available directory..."
     exit 1
 fi
 
 
-pushd "${basedir}"
-
-
-cp blog.apache.conf /etc/apache2/conf-available/blog.apache.conf
+cp "${basedir}/blog.apache.conf" "/etc/apache2/conf-available/blog.apache.conf"
 if which a2enconf >/dev/null 2>&1; then
     a2enconf blog.apache
 elif [ -d /etc/apache/conf-enabled ]; then
@@ -58,7 +55,7 @@ else
 fi
 
 
-cp blog.cron.d /etc/cron.d/blog
+cp "${basedir}/blog.cron.d" "/etc/cron.d/blog"
 
 
 cp -p ${basedir}/{publisher.sh,config} /var/www/publisher

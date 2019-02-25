@@ -1,18 +1,15 @@
 #!/bin/bash
 
 
-basedir=$(dirname $(readlink -f $0))
-
-
-script="${basedir}/builder/template-vars.sh"
+script="builder/template-vars.sh"
 
 
 # get all of our existing template vars
-template_vars=$($script "${basedir}/template/header.html" && $script "${basedir}/template/footer.html")
+template_vars=$(bash "${script}" "template/header.html" && bash "${script}" "template/footer.html")
 
 
 # get all markdown files
-files=$(find ${basedir}/posts -type f | grep "\.md$")
+files=$(find posts -type f | grep "\.md$")
 
 
 # loop over template variables

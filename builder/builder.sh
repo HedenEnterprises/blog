@@ -71,14 +71,19 @@ bash "builder/template-vars.sh" "${footer}" >> "${varfile}"
 
 
 # process files
-files=$(find "posts" -type f)
+files=$(find "posts/" -type f)
+echo ""
+echo "Files: " $files
+echo ""
 for source in $files; do
 
+    echo ""
     echo "Working with file: ${source}"
 
     target=$(echo "${source}" | sed 's/^posts/published/' | sed 's/md$/html/')
 
     echo " > Target file: ${target}"
+    echo ""
 
     # if the file is a markdown file, we process it
     if echo $source | grep -q "\.md$"; then
