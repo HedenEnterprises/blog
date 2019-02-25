@@ -137,6 +137,15 @@ for source in $files; do
 
         done < "${varfile}"
 
+        echo ""
+        echo "****"
+        echo "wtf"
+        git status
+        echo ""
+        echo "****"
+        echo ""
+        echo ""
+
 
         # transfer markdown to html (while pre/app-ending our template data)
         cat "${header}.tmp" > "${source}.tmp"
