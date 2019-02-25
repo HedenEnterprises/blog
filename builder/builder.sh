@@ -153,6 +153,18 @@ for source in $files; do
         echo "<!DOCTYPE html>" > "${target}"
         cat "${target}.tmp" >> "${target}"
 
+        echo ""
+        echo ""
+        echo ""
+        echo "************* ls"
+        ls published/
+        echo ""
+        echo "<<<<<<<<<<<<<<<<<"
+
+        echo ""
+        echo ""
+        echo ""
+
 
         # now clean up all the tmp files
         echo rm "${source}.tmp" "${source}.stripped"
