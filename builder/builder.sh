@@ -37,7 +37,7 @@ fi
 if [ -f "${basedir}/../posts.md5" ]; then
 
     md5old=$(cat "${basedir}/../posts.md5")
-    md5new=$(bash "${basedir}/md5-dir.sh")
+    md5new=$(bash "${basedir}/builder/md5-dir.sh")
 
     # check if the md5 of the posts/ directory is the same as it has been
     # if it is, then we have nothing to do
@@ -50,7 +50,7 @@ if [ -f "${basedir}/../posts.md5" ]; then
 
 # if we don't, we need one
 else
-    bash "${basedir}/md5-dir.sh"
+    bash "${basedir}/builder/md5-dir.sh"
 fi
 
 
@@ -73,18 +73,24 @@ fi
 
 
 # grab any template variables from header/footer (e.g.: %%%{TITLE})
-./builder/template-vars.sh "${header}" >> "${varfile}"
-./builder/template-vars.sh "${footer}" >> "${varfile}"
+"${basedir}/builder/template-vars.sh" "${header}" >> "${varfile}"
+"${basedir}/builder/template-vars.sh" "${footer}" >> "${varfile}"
 
 
 # process files
 files=$(find "${basedir}/posts" -type f)
 for source in $files; do
 
+    echo "Working with file: ${source}"
+
     target=$(echo "${source}" | sed 's/^posts/published/' | sed 's/md$/html/')
+
+    echo " > Target file: ${target}"
 
     # if the file is a markdown file, we process it
     if echo $source | grep -q "\.md$"; then
+
+        echo " > Markdown file..."
 
 
         # we'll be using tmp header/footer so we can do search+replace
@@ -158,6 +164,7 @@ for source in $files; do
 
     # otherwise we just copy it...
     else
+        echo " > Non-markdown, copying directly..."
         cp "${source}" "${target}"
     fi
 
