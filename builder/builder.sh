@@ -152,16 +152,40 @@ for source in $files; do
         markdown $opts_markdown "${source}.stripped" >> "${source}.tmp"
         cat "${footer}.tmp" >> "${source}.tmp"
 
+        echo ""
+        echo "****"
+        echo "wtf"
+        git status
+        echo ""
+        echo "****"
+        echo ""
+        echo ""
 
         # now apply tidy html to it (with our options declared up top)
         cat "${source}.tmp" | tidy $opts_tidy > "${target}.tmp"
 
+        echo ""
+        echo "****"
+        echo "wtf"
+        git status
+        echo ""
+        echo "****"
+        echo ""
+        echo ""
 
         # we have to do this because the version of tidy we use doesn't have
         # the `html5` option :(
         echo "<!DOCTYPE html>" > "${target}"
         cat "${target}.tmp" >> "${target}"
 
+        echo ""
+        echo "****"
+        echo "wtf"
+        git status
+        echo ""
+        echo "****"
+        echo ""
+        echo ""
 
         # now clean up all the tmp files
         rm "${source}.tmp" "${source}.stripped"
@@ -176,6 +200,14 @@ for source in $files; do
     fi
 
 
+        echo ""
+        echo "****"
+        echo "wtf"
+        git status
+        echo ""
+        echo "****"
+        echo ""
+        echo ""
 done
 
 
