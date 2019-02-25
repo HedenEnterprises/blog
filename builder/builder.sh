@@ -1,21 +1,14 @@
 #!/bin/bash
 
 
-basedir=$(dirname $(readlink -f $0))
-
-
-# get rid of /builder at end of basedir
-basedir=$(echo "${basedir}" | sed 's|/builder$||')
-
-
 # processing tool options
 opts_markdown=""
 opts_tidy="-indent --indent-spaces 4 -wrap -1 --doctype omit"
 
 
 # template files
-header="${basedir}/template/header.html"
-footer="${basedir}/template/footer.html"
+header="template/header.html"
+footer="template/footer.html"
 
 
 # make sure the template files exist
@@ -34,10 +27,10 @@ fi
 
 # check if we have a current md5 of our posts file
 # if we don't it forces a complete rebuild (e.g.: new template files)
-if [ -f "${basedir}/../posts.md5" ]; then
+if [ -f "posts.md5" ]; then
 
-    md5old=$(cat "${basedir}/../posts.md5")
-    md5new=$(bash "${basedir}/builder/md5-dir.sh")
+    md5old=$(cat "posts.md5")
+    md5new=$(bash "builder/md5-dir.sh")
 
     # check if the md5 of the posts/ directory is the same as it has been
     # if it is, then we have nothing to do
@@ -50,35 +43,35 @@ if [ -f "${basedir}/../posts.md5" ]; then
 
 # if we don't, we need one
 else
-    bash "${basedir}/builder/md5-dir.sh"
+    bash "builder/md5-dir.sh"
 fi
 
 
 # wipe out the published/ dir
-rm -rf "${basedir}/published/*"
+rm -rf "published/*"
 
 
 # create appropriate directories in published/ directory
-dirs=$(find "${basedir}/posts" -type d | sed 's/^posts/published/')
+dirs=$(find "posts/" -type d | sed 's/^posts/published/')
 for dir in $dirs; do
     mkdir -p "${dir}"
 done
 
 
 # see what variables our header/footer requires and store them somewhere
-varfile="${basedir}/template.variables"
+varfile="template.variables"
 if [ -f "${varfile}" ]; then
     rm "${varfile}"
 fi
 
 
 # grab any template variables from header/footer (e.g.: %%%{TITLE})
-"${basedir}/builder/template-vars.sh" "${header}" >> "${varfile}"
-"${basedir}/builder/template-vars.sh" "${footer}" >> "${varfile}"
+bash "builder/template-vars.sh" "${header}" >> "${varfile}"
+bash "builder/template-vars.sh" "${footer}" >> "${varfile}"
 
 
 # process files
-files=$(find "${basedir}/posts" -type f)
+files=$(find "posts" -type f)
 for source in $files; do
 
     echo "Working with file: ${source}"
