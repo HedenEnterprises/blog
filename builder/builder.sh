@@ -175,7 +175,7 @@ for source in $files; do
     # otherwise we just copy it...
     else
         echo " > Non-markdown, copying directly..."
-        cp "${source}" "${target}"
+        echo cp "${source}" "${target}"
     fi
 
 
