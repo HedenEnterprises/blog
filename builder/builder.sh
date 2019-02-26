@@ -1,15 +1,6 @@
 #!/bin/bash
 
 
-function lsp {
-    echo ""
-    echo "***"
-    echo "$@"
-    ls published/
-    echo "***"
-    echo ""
-}
-
 # processing tool options
 opts_markdown=""
 opts_tidy="-indent --indent-spaces 4 -wrap -1 --doctype omit"
@@ -56,30 +47,9 @@ else
 fi
 
 
-lsp 1
-
-
-# who is travis, really?
-git config --global user.email "travis@travis-ci.org"
-git config --global user.name  "Travis CI"
-
-
-# now do some fancy stuff and reset our origin to use our gh access token
-git remote rm origin
-git remote add origin https://${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
-
-
-# now add all the stuff we care about
-git checkout master
-
-
-lsp 2
-
 # wipe out the published/ dir
 rm -rf "published/*"
 
-
-lsp 3
 
 # create appropriate directories in published/ directory
 dirs=$(find "posts/" -type d | sed 's/^posts/published/')
@@ -87,7 +57,6 @@ for dir in $dirs; do
     mkdir -p "${dir}"
 done
 
-lsp 4
 
 # see what variables our header/footer requires and store them somewhere
 varfile="template.variables"
@@ -95,19 +64,14 @@ if [ -f "${varfile}" ]; then
     rm "${varfile}"
 fi
 
-lsp 5
 
 # grab any template variables from header/footer (e.g.: %%%{TITLE})
 bash "builder/template-vars.sh" "${header}" >> "${varfile}"
 bash "builder/template-vars.sh" "${footer}" >> "${varfile}"
 
-lsp 6
 
 # process files
 files=$(find "posts/" -type f)
-echo ""
-echo "Files: " $files
-echo ""
 for source in $files; do
 
     echo ""
@@ -118,20 +82,15 @@ for source in $files; do
     echo " > Target file: ${target}"
     echo ""
 
-    lsp 7
-
     # if the file is a markdown file, we process it
     if echo $source | grep -q "\.md$"; then
 
         echo " > Markdown file..."
 
-        lsp 8
 
         # we'll be using tmp header/footer so we can do search+replace
         cp "${header}" "${header}.tmp"
         cp "${footer}" "${footer}.tmp"
-
-        lsp 9
 
 
         # now look through the current file to find any variables it declares
@@ -175,54 +134,55 @@ for source in $files; do
 
         done < "${varfile}"
 
-        lsp 10
-
 
         # transfer markdown to html (while pre/app-ending our template data)
         cat "${header}.tmp" > "${source}.tmp"
         markdown $opts_markdown "${source}.stripped" >> "${source}.tmp"
         cat "${footer}.tmp" >> "${source}.tmp"
 
-        lsp 11
 
         # now apply tidy html to it (with our options declared up top)
         cat "${source}.tmp" | tidy $opts_tidy > "${target}.tmp"
 
-        lsp 12
 
         # we have to do this because the version of tidy we use doesn't have
         # the `html5` option :(
         echo "<!DOCTYPE html>" > "${target}"
         cat "${target}.tmp" >> "${target}"
 
-        lsp 13
 
-        git add "${target}"
-
-        lsp 14
+        # now clean up all the tmp files
+        rm "${source}.tmp" "${source}.stripped"
+        rm "${target}.tmp"
+        rm "${header}.tmp" "${footer}.tmp"
 
 
     # otherwise we just copy it...
     else
-        lsp bypass-1
         echo " > Non-markdown, copying directly..."
         echo cp "${source}" "${target}"
-        lsp bypass-2
     fi
 done
 
-lsp end
 
 # clean up the template variable file
 rm "${varfile}"
 
-lsp after rm varfile: ${varfile}
+
+# who is travis, really?
+git config --global user.email "travis@travis-ci.org"
+git config --global user.name  "Travis CI"
 
 
-git add -f posts.md5
+# now do some fancy stuff and reset our origin to use our gh access token
+git remote rm origin
+git remote add origin https://${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
+
+
+# now add all the stuff we care about
+git checkout master
+git add -f posts.md5 published/
 git status
-
-lsp final
 
 
 # commit with our special message
