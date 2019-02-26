@@ -60,3 +60,10 @@ appropriate ownership to all the directories touched (the `target` in the
 Because I don't care, really. This was built for me. It's trivial enough to
 make this whole thing (not just publisher) system agnostic, but again:
 _*I*_ _*just*_ _***don't_ _care***_.
+
+
+## Todo
+
+- [ ] Make it work on more linices (linuxes?)
+- [ ] Add logrotate for bloglog
+- [ ] Interactive install?

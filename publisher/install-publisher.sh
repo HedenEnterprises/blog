@@ -58,5 +58,8 @@ fi
 cp "${basedir}/blog.cron.d" "/etc/cron.d/blog"
 
 
+touch "/var/www/publisher/bloglog"
+
+
 cp -p ${basedir}/{publisher.sh,config} /var/www/publisher
 chown -R www-data:www-data /var/www/publisher

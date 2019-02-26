@@ -6,11 +6,11 @@ basedir=$(dirname $(readlink -f $0))
 
 config_file="${basedir}/config"
 last_check_file="${basedir}/last.check"
-bad_fetch_file="${basedir}/bad.fetch"
+fetch_file="${basedir}/bad.fetch"
 
 if [ "x$1" != "x" ]; then config_file=$1; fi
 if [ "x$2" != "x" ]; then last_check_file=$2; fi
-if [ "x$3" != "x" ]; then bad_fetch_file=$3; fi
+if [ "x$3" != "x" ]; then fetch_file=$3; fi
 
 
 # check dependencies
@@ -62,6 +62,12 @@ if [ -f "${last_check_file}" ]; then
         exit 0
     fi
 fi
+
+
+echo "****************************"
+echo "publisher beginning execution"
+echo " > " $(date) "|" $(date +%s)
+echo ""
 
 
 echo $current_timestamp > "${last_check_file}"
@@ -138,7 +144,7 @@ pushd "${repo}"
 # nothing fancy
 bad_fetch=0
 if [ "x$dont_fetch" != "xtrue" ]; then
-    git fetch 2>"${bad_fetch_file}"
+    git fetch 2>"${fetch_file}"
     bad_fetch=$(echo $?)
 fi
 
