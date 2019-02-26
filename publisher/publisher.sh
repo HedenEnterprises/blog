@@ -6,11 +6,9 @@ basedir=$(dirname $(readlink -f $0))
 
 config_file="${basedir}/config"
 last_check_file="${basedir}/last.check"
-fetch_file="${basedir}/bad.fetch"
 
 if [ "x$1" != "x" ]; then config_file=$1; fi
 if [ "x$2" != "x" ]; then last_check_file=$2; fi
-if [ "x$3" != "x" ]; then fetch_file=$3; fi
 
 
 # check dependencies
@@ -123,7 +121,7 @@ if [ ! -d "${repo}" ]; then
 
 
     # we dont need to fetch if we just cloned...
-    dont_fetch=true
+    dont_pull=true
 fi
 
 
@@ -142,16 +140,11 @@ pushd "${repo}"
 
 
 # nothing fancy
-bad_fetch=0
-if [ "x$dont_fetch" != "xtrue" ]; then
-    git fetch 2>"${fetch_file}"
-    bad_fetch=$(echo $?)
-fi
-
-
-if [ $bad_fetch -ne 0 ]; then
-    echo "Bad fetch detected!"
-    exit 1
+if [ "x$dont_pull" != "xtrue" ]; then
+    if ! git pull; then
+        echo "Bad pull occured!"
+        exit 1
+    fi
 fi
 
 
