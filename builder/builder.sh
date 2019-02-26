@@ -1,6 +1,16 @@
 #!/bin/bash
 
 
+basedir=$(dirname $(readlink -f $0))
+
+
+function execute_plugin {
+    if [ -f "${basedir}/../executor/executor.sh" ]; then
+        /bin/bash "${basedir}/../executor/executor.sh" builder $@
+    fi
+}
+
+
 # processing tool options
 opts_markdown=""
 opts_tidy="-indent --indent-spaces 4 -wrap -1 --doctype omit"
@@ -22,6 +32,12 @@ fi
 if [ "x$TRAVIS_COMMIT_MESSAGE" = "x" ]; then
     echo "No commit message found, that's odd"
     exit 1
+fi
+
+
+# fake token if need be
+if [ "x$token" = "x" ]; then
+    token="f4k3t0k3n"
 fi
 
 
@@ -68,6 +84,9 @@ fi
 # grab any template variables from header/footer (e.g.: %%%{TITLE})
 bash "builder/template-vars.sh" "${header}" >> "${varfile}"
 bash "builder/template-vars.sh" "${footer}" >> "${varfile}"
+
+
+execute_plugin pre-files
 
 
 # process files
@@ -135,13 +154,23 @@ for source in $files; do
 
 
         # transfer markdown to html (while pre/app-ending our template data)
-        cat "${header}.tmp" > "${source}.tmp"
+        if [ -f "${source}.tmp" ]; then
+            rm "${source}.tmp"
+        fi
+        execute_plugin pre-markdown "${source}" "${header}.tmp" "${footer}.tmp"
+        cat "${header}.tmp" >> "${source}.tmp"
         markdown $opts_markdown "${source}.stripped" >> "${source}.tmp"
         cat "${footer}.tmp" >> "${source}.tmp"
+        execute_plugin post-markdown "${source}" "${source}.tmp"
 
 
         # now apply tidy html to it (with our options declared up top)
+        execute_plugin pre-tidy "${opts_tidy}" "${source}" "${source}.tmp" "${target}.tmp"
+        if [ -f tidy.opts ]; then
+            opts_tidy=$(cat tidy.opts)
+        fi
         cat "${source}.tmp" | tidy $opts_tidy > "${target}.tmp" 2>/dev/null
+        execute_plugin post-tidy "${target}.tmp"
 
 
         # we have to do this because the version of tidy we use doesn't have
@@ -159,34 +188,51 @@ for source in $files; do
     # otherwise we just copy it...
     else
         echo " > Non-markdown file, copying directly..."
-        echo cp "${source}" "${target}"
+        cp "${source}" "${target}"
     fi
 done
+
+
+execute_plugin post-files
 
 
 # clean up the template variable file
 rm "${varfile}"
 
 
-# who is travis, really?
-git config --global user.email "travis@travis-ci.org"
-git config --global user.name  "Travis CI"
+if [ "x$SKIPGIT" != "xYES" ]; then
+
+    # who is travis, really?
+    git config --global user.email "travis@travis-ci.org"
+    git config --global user.name  "Travis CI"
 
 
-# now do some fancy stuff and reset our origin to use our gh access token
-git remote rm origin
-git remote add origin https://${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
+    # now do some fancy stuff and reset our origin to use our gh access token
+    git remote rm origin
+    git remote add origin https://${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
 
 
-# now add all the stuff we care about
-git checkout master
-git add -f posts.md5 published/
-git status
+    # now add all the stuff we care about
+    git checkout master
+    git add -f posts.md5 published/
+    git status
+fi
+
+
+execute_plugin pre-git-commit "${TRAVIS_COMMIT}" "${TRAVIS_COMMIT_MESSAGE}"
 
 
 # commit with our special message
-git commit -m "[skip ci] ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
+if [ "x$SKIPGIT" != "xYES" ]; then
+    git commit -m "[skip ci] ${TRAVIS_COMMIT}: ${TRAVIS_COMMIT_MESSAGE}"
+fi
 
-if git push origin master --quiet >/dev/null 2>&1; then
-    echo "git push successful!"
+
+execute_plugin pre-git-push
+
+
+if [ "x$SKIPGIT" != "xYES" ]; then
+    if git push origin master --quiet >/dev/null 2>&1; then
+        echo "git push successful!"
+    fi
 fi
