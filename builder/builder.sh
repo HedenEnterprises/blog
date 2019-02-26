@@ -47,6 +47,20 @@ else
 fi
 
 
+# who is travis, really?
+git config --global user.email "travis@travis-ci.org"
+git config --global user.name  "Travis CI"
+
+
+# now do some fancy stuff and reset our origin to use our gh access token
+git remote rm origin
+git remote add origin https://${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
+
+
+# now add all the stuff we care about
+git checkout master
+
+
 # wipe out the published/ dir
 rm -rf "published/*"
 
@@ -153,23 +167,8 @@ for source in $files; do
         echo "<!DOCTYPE html>" > "${target}"
         cat "${target}.tmp" >> "${target}"
 
-        echo ""
-        echo ""
-        echo ""
-        echo "************* ls"
-        ls published/
-        echo ""
-        echo "<<<<<<<<<<<<<<<<<"
 
-        echo ""
-        echo ""
-        echo ""
-
-
-        # now clean up all the tmp files
-        echo rm "${source}.tmp" "${source}.stripped"
-        echo rm "${target}.tmp"
-        echo rm "${header}.tmp" "${footer}.tmp"
+        git add "${target}"
 
 
     # otherwise we just copy it...
@@ -177,16 +176,6 @@ for source in $files; do
         echo " > Non-markdown, copying directly..."
         echo cp "${source}" "${target}"
     fi
-
-
-        echo ""
-        echo "****"
-        echo "wtf"
-        git status
-        echo ""
-        echo "****"
-        echo ""
-        echo ""
 done
 
 
@@ -194,19 +183,7 @@ done
 rm "${varfile}"
 
 
-# who is travis, really?
-git config --global user.email "travis@travis-ci.org"
-git config --global user.name  "Travis CI"
-
-
-# now do some fancy stuff and reset our origin to use our gh access token
-git remote rm origin
-git remote add origin https://${token}@github.com/HedenEnterprises/blog.git >/dev/null 2>&1
-
-
-# now add all the stuff we care about
-git checkout master
-git add -f posts.md5 published/
+git add -f posts.md5
 git status
 
 
