@@ -80,12 +80,11 @@ for source in $files; do
     target=$(echo "${source}" | sed 's/^posts/published/' | sed 's/md$/html/')
 
     echo " > Target file: ${target}"
-    echo ""
 
     # if the file is a markdown file, we process it
     if echo $source | grep -q "\.md$"; then
 
-        echo " > Markdown file..."
+        echo " > This is a markdown file..."
 
 
         # we'll be using tmp header/footer so we can do search+replace
@@ -142,7 +141,7 @@ for source in $files; do
 
 
         # now apply tidy html to it (with our options declared up top)
-        cat "${source}.tmp" | tidy $opts_tidy > "${target}.tmp"
+        cat "${source}.tmp" | tidy $opts_tidy > "${target}.tmp" 2>/dev/null
 
 
         # we have to do this because the version of tidy we use doesn't have
@@ -159,7 +158,7 @@ for source in $files; do
 
     # otherwise we just copy it...
     else
-        echo " > Non-markdown, copying directly..."
+        echo " > Non-markdown file, copying directly..."
         echo cp "${source}" "${target}"
     fi
 done
