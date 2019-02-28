@@ -28,8 +28,11 @@ if [ "x$1" = "xinitial" ] || [ ! -f "${basedir}/checked" ]; then
 fi
 
 
-if [ -f "${basedir}/checked" ] && [ $(cat "${basedir}/checked") = "nah" ]; then
-    exit 0
+if [ -f "${basedir}/checked" ]; then
+    checked=$(cat "${basedir}/checked")
+    if [ "${checked},tho" = "nah,tho" ]; then
+        exit 0
+    fi
 fi
 
 
