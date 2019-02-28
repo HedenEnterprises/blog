@@ -1,3 +1,5 @@
+---
+
 language: minimal
 
 sudo: true
@@ -5,8 +7,8 @@ sudo: true
 addons:
   apt:
     packages:
-    - tidy
-    - markdown
+      - tidy
+      - markdown
 
 script:
-- "./builder/builder.sh"
+  - "./builder/builder.sh"
