@@ -2,7 +2,45 @@
 
 
 basedir=$(dirname $(readlink -f $0))
-pluginsdir="${basedir}/../plugins"
+
+
+pluginsdir="${basedir}/../plugins2"
+if [ ! -d "${pluginsdir}" ]; then
+    pluginsdir="${basedir}/plugins2"
+fi
+
+
+# before we do *anything* else ... each script that calls the executor
+# can either call it with a single argument "initial" to force the check
+# or can just use it regularly - and this will happen anyhoozles
+if [ "x$1" = "xinitial" ] || [ ! -f "${basedir}/checked" ]; then
+
+    if [ ! -d "${pluginsdir}" ]; then
+        echo ""
+        echo "No plugins directory found!"
+        echo ""
+
+        echo "nah" > "${basedir}/checked"
+        exit 0
+    fi
+
+    echo "literally any string works here" > "${basedir}/checked"
+fi
+
+
+if [ -f "${basedir}/checked" ] && [ $(cat "${basedir}/checked") = "nah" ]; then
+    exit 0
+fi
+
+
+# if this condition is met, it means whatever happened between the initial check
+# and now - something has changed...
+if [ ! -d "${pluginsdir}" ]; then
+    echo ""
+    echo "Plugins directory has gone away.... wat?"
+    echo ""
+    exit 1
+fi
 
 
 # execute a plugin by specifying either app "builder" or "publisher"
@@ -12,7 +50,6 @@ pluginsdir="${basedir}/../plugins"
 # and will execute them in order
 #
 # the specific data points that are passed to the executor are in the readme
-
 app=$1
 type=$2
 
@@ -60,12 +97,6 @@ if [ "$app" = "builder" ]; then
 #     case $type in
 
 #     esac
-fi
-
-
-if [ ! -d "${pluginsdir}" ]; then
-    echo "No plugins directory found"
-    exit 1
 fi
 
 
