@@ -4,9 +4,9 @@
 basedir=$(dirname $(readlink -f $0))
 
 
-pluginsdir="${basedir}/../plugins2"
+pluginsdir="${basedir}/../plugins"
 if [ ! -d "${pluginsdir}" ]; then
-    pluginsdir="${basedir}/plugins2"
+    pluginsdir="${basedir}/plugins"
 fi
 
 
