@@ -1,0 +1,24 @@
+#!/bin/bash
+
+
+# the argument passed to this plugin from the builder is "${target}.tmp"
+target_tmp=$1
+
+
+if [ ! -f "${target_tmp}" ]; then
+    echo "No temp target found"
+    exit 1
+fi
+
+
+# we need to make a scratch file
+scratch_tmp="${target_tmp}.doctype.scratch"
+
+
+# get rid of any DOCTYPE declarations
+cat "${target_tmp}" | grep -v "<\!DOCTYPE" > "${scratch_tmp}"
+
+
+# create our own DOCTYPE, and then pass the rest of the scratch file in
+echo "<!DOCTYPE html>" > "${target_tmp}"
+cat "${scratch_tmp}" >> "${target_tmp}"

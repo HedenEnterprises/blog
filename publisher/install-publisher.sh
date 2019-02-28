@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-basedir=$(dirname $(readlink $0))
+basedir=$(dirname $(readlink -f $0))
 
 
 echo ""

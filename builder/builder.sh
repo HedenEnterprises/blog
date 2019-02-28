@@ -13,7 +13,7 @@ function execute_plugin {
 
 # processing tool options
 opts_markdown=""
-opts_tidy="-indent --indent-spaces 4 -wrap -1 --doctype omit"
+opts_tidy="-indent --indent-spaces 4 -wrap -1"
 
 
 # template files
@@ -175,9 +175,6 @@ for source in $files; do
         execute_plugin post-tidy "${target}.tmp"
 
 
-        # we have to do this because the version of tidy we use doesn't have
-        # the `html5` option :(
-        echo "<!DOCTYPE html>" > "${target}"
         cat "${target}.tmp" >> "${target}"
 
 
