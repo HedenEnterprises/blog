@@ -92,11 +92,18 @@ if [ "$app" = "builder" ]; then
     esac
 
 
-# # publisher types
-# else
-#     case $type in
-
-#     esac
+# publisher types
+else
+    case $type in
+        post-config-load)   ;;
+        pre-last-check)     ;;
+        post-last-check)    ;;
+        pre-rsync)          ;;
+        *)
+            echo "Unknown publisher type"
+            exit 1
+            ;;
+    esac
 fi
 
 
