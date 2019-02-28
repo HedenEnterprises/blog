@@ -4,6 +4,18 @@
 basedir=$(dirname $(readlink -f $0))
 
 
+function execute_plugin {
+    if [ -f "${basedir}/../executor/executor.sh" ]; then
+        executor="${basedir}/../executor/executor.sh"
+    elif [ -f "${basedir}/executor/executor.sh" ]; then
+        executor="${basedir}/executor/executor.sh"
+    fi
+    if [ "x$executor" != "x" ]; then
+        /bin/bash "${executor}" publisher $@
+    fi
+}
+
+
 config_file="${basedir}/config"
 last_check_file="${basedir}/last.check"
 
@@ -37,13 +49,19 @@ repo=$(echo "${repo_url}" | sed 's|.git$||' | sed 's|.*/||')
 target=$(echo "${target}" | sed 's|/$||')
 
 
+execute_plugin post-config-load "${repo_url}" "${clone_target}" "${target}"
+
+
 frequency=$(echo $frequency | sed 's|[^0-9]*||g')
 frequency=$(( $frequency ))
 
 
 # sane values plz
-if [ $frequency -lt 1 ];             then frequency=1               ; fi
+if [ $frequency -lt 1 ];              then frequency=1               ; fi
 if [ $frequency -gt $(( 24 * 60 )) ]; then frequency=$(( 24 * 60))   ; fi
+
+
+execute_plugin pre-last-check "${frequency}" "${last_check_file}"
 
 
 if [ -f "${last_check_file}" ]; then
@@ -69,6 +87,9 @@ echo ""
 
 
 echo $current_timestamp > "${last_check_file}"
+
+
+execute_plugin post-last-check "${current_timestamp}"
 
 
 echo "Publisher variables:"
@@ -146,6 +167,9 @@ if [ "x$dont_pull" != "xtrue" ]; then
         exit 1
     fi
 fi
+
+
+execute_plugin pre-rsync "${target}"
 
 
 # also nothing fancy

@@ -56,10 +56,6 @@ if [ -f "posts.md5" ]; then
         echo " > New: ${md5new}"
         exit 0
     fi
-
-# if we don't, we need one
-else
-    bash "builder/md5-dir.sh"
 fi
 
 
@@ -86,11 +82,17 @@ bash "builder/template-vars.sh" "${header}" >> "${varfile}"
 bash "builder/template-vars.sh" "${footer}" >> "${varfile}"
 
 
-execute_plugin pre-files
-
 
 # process files
 files=$(find "posts/" -type f)
+
+
+execute_plugin pre-files "$files"
+if [ -f file.list ]; then
+    files=$(cat file.list)
+fi
+
+
 for source in $files; do
 
     echo ""
@@ -165,7 +167,7 @@ for source in $files; do
 
 
         # now apply tidy html to it (with our options declared up top)
-        execute_plugin pre-tidy "${opts_tidy}" "${source}" "${source}.tmp" "${target}.tmp"
+        execute_plugin pre-tidy "${opts_tidy}" "${source}" "${source}.tmp"
         if [ -f tidy.opts ]; then
             opts_tidy=$(cat tidy.opts)
         fi
@@ -187,8 +189,10 @@ for source in $files; do
 
     # otherwise we just copy it...
     else
+        execute_plugin pre-plain "${source}"
         echo " > Non-markdown file, copying directly..."
         cp "${source}" "${target}"
+        execute_plugin post-plain "${target}"
     fi
 done
 
@@ -198,6 +202,10 @@ execute_plugin post-files
 
 # clean up the template variable file
 rm "${varfile}"
+
+
+# create a new posts.md5 file
+bash "builder/md5-dir.sh"
 
 
 if [ "x$SKIPGIT" != "xYES" ]; then

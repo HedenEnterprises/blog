@@ -1,8 +1,7 @@
 #!/bin/bash
 
-
-basedir=$(dirname $(readlink -f $0))
-
+basedir=$(dirname $(readlink  $0))
+basedir=$(dirname $0)
 
 echo ""
 echo ""
@@ -16,7 +15,7 @@ echo ""
 echo "Hint: grep -R \"var/www/publisher\" ."
 echo ""
 
-sleep 5
+#sleep 5
 
 
 if ! mkdir -p "/var/www/publisher" 2>/dev/null; then
@@ -31,28 +30,29 @@ if [ ! -d "/etc/cron.d/" ]; then
 fi
 
 
-if [ ! -d "/etc/apache2/conf-available" ]; then
-    echo "No /etc/apache2/conf-available directory..."
-    exit 1
-fi
+# if [ ! -d "/etc/apache2/conf-available" ]; then
+#     echo "No /etc/apache2/conf-available directory..."
+#     exit 1
+# fi
 
 
 cp "${basedir}/blog.apache.conf" "/etc/apache2/conf-available/blog.apache.conf"
 if which a2enconf >/dev/null 2>&1; then
-    a2enconf blog.apache
-elif [ -d /etc/apache/conf-enabled ]; then
-    ln -s /etc/apache2/conf-available/blog.apache.conf /etc/apache2/conf-enabled/blog.apache.conf
+    echo "a2enconf tho"
+#    a2enconf blog.apache
+#elif [ -d /etc/apache/conf-enabled ]; then
+#    ln -s /etc/apache2/conf-available/blog.apache.conf /etc/apache2/conf-enabled/blog.apache.conf
 else
     echo "How shall we enable your apache module?"
-    exit 1
+#    exit 1
 fi
 
 
-if which systemctl >/dev/null 2>&1; then
-    systemctl restart apache2
-else
-    service apache2 restart
-fi
+# if which systemctl >/dev/null 2>&1; then
+#     systemctl restart apache2
+# else
+#     service apache2 restart
+# fi
 
 
 cp "${basedir}/blog.cron.d" "/etc/cron.d/blog"
@@ -62,4 +62,7 @@ touch "/var/www/publisher/bloglog"
 
 
 cp -p ${basedir}/{publisher.sh,config} /var/www/publisher
-chown -R www-data:www-data /var/www/publisher
+cp -pr ${basedir}/../executor /var/www/publisher
+mkdir /var/www/publisher/plugins
+#chown -R www-data:www-data /var/www/publisher
+chown -R a6002878 /var/www/publisher
