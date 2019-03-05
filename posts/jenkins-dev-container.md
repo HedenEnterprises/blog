@@ -1,3 +1,5 @@
+<!-- TITLE: Jenkins Development Container -->
+
 # Jenkins Development Container
 
 I am not a Jenkins plugin developer, but I recently found myself requiring a Jenkins plugin development environment. After upgrading Jenkins, one of our plugins stopped working properly.
