@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="generator" content="https://github.com/HedenEnterprises/blog">
+    <meta name="generator" content="HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+
+    <title>Jenkins Development Container</title>
+</head>
+
+<body>
+    <div id="wrap">
+        <h1>Jenkins Development Container</h1>
+
+        <h1>Jenkins Development Container</h1>
+
+        <p>I am not a Jenkins plugin developer, but I recently found myself requiring a Jenkins plugin development environment. After upgrading Jenkins, one of our plugins stopped working properly.</p>
+
+        <h2>Back Story</h2>
+
+        <p>I don&acirc;&euro;&trade;t know specifically when, but at some point Jenkins changed the behavior of <code>JenkinsLocationConfiguration()</code> (somewhere between versions 2.121.2 and 2.150.1).</p>
+
+        <p>A groovy script like the following used to display your Jenkins URL:</p>
+
+        <p><code>JenkinsLocationConfiguration config = new JenkinsLocationConfiguration() url = config.getUrl() println(url)</code></p>
+
+        <p>It changed at some point to:</p>
+
+        <p><code>JenkinsLocationConfiguration config = new JenkinsLocationConfiguration().get() url = config.getUrl() println(url)</code></p>
+
+        <p>(Notice the <code>.get()</code>?)</p>
+
+        <p>Seems like a harmless enough change, but it was causing the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Stash+pullrequest+builder+plugin">Stash Pull Request Builder Plugin</a> to spam our BitBucket pull requests with "PLEASE SET JENKINS ROOT URL FROM GLOBAL CONFIGURATION". Keep in mind this wasn&acirc;&euro;&trade;t causing any unintended side effects, it was just distracting (and ugly to look at).</p>
+
+        <p>I was tasked with making it go away.</p>
+
+        <h2>Jenkins Development Environment</h2>
+
+        <p>I didn&acirc;&euro;&trade;t want to take the time to set up my laptop as a Jenkins plugin workspace (especially without knowing the first thing about it) &acirc;&euro;&ldquo; so I decided to take another route.</p>
+
+        <p>We&acirc;&euro;&trade;re going to create a Jenkins development container based off of the <a href="https://hub.docker.com/r/jenkins/jenkins">LTS Jenkins image</a> from Docker Hub.</p>
+
+        <p>For the rest of this post, I&acirc;&euro;&trade;ll be actually walking through fixing that particular issue on that particular plugin.</p>
+
+        <h3>Create the Dockerfile</h3>
+
+        <p>First thing first, let&acirc;&euro;&trade;s create a directory to house our work. We&acirc;&euro;&trade;ll call it <code>jenkins-dev</code>:</p>
+
+        <p><code>mkdir jenkins-dev cd jenkins-dev touch Dockerfile</code></p>
+
+        <p>Now open up <code>Dockerfile</code> with your favorite editor and we&acirc;&euro;&trade;ll start by specifying the base image we plan on using. (I suggest taking a brief look at the <a href="https://github.com/jenkinsci/docker/blob/master/Dockerfile">original Dockerfile</a> in order to get an understanding of what it&acirc;&euro;&trade;s doing and what we need to do).</p>
+
+        <p><code>FROM jenkins/jenkins:lts</code></p>
+
+        <p>Jenkins plugins use maven, so now we&acirc;&euro;&trade;ll switch to the root user so that we can install our (only) <a href="https://maven.apache.org/what-is-maven.html">dependency</a>.</p>
+
+        <p>``` USER root</p>
+
+        <p>RUN apt-get update &amp;&amp; \ apt-get install -y maven ```</p>
+
+        <p>If you&acirc;&euro;&trade;re new to Docker or writing Dockerfiles, keep in mind that the backslash on the first RUN line is important, that tells Docker that the following line is part of that directive (and to keep them <a href="https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#minimize-the-number-of-layers">in the same layer</a>).</p>
+
+        <p>Finally, we&acirc;&euro;&trade;ll change back to the jenkins user.</p>
+
+        <p><code>USER jenkins</code></p>
+
+        <p>You should have a pretty small file.</p>
+
+        <p>``` FROM jenkins/jenkins:lts</p>
+
+        <p>USER root RUN apt-get update &amp;&amp; \ apt-get install -y maven</p>
+
+        <p>USER jenkins ```</p>
+
+        <h3>Build and run the image</h3>
+
+        <p>From that same directory, start the build. We&acirc;&euro;&trade;re going to name and tag our image <code>jenkins/dev:lts</code>.</p>
+
+        <p><code>docker build -t jenkins/dev:lts .</code></p>
+
+        <p>Once it has completed, verify that build was successful.</p>
+
+        <p><code>$ docker images REPOSITORY TAG IMAGE ID CREATED SIZE jenkins/dev lts 29559a9e7f04 2 seconds ago 756MB</code></p>
+
+        <p>Perfect! That was easy. Now let&acirc;&euro;&trade;s start it up so we can start compiling. We&acirc;&euro;&trade;re going to give it an easy to remember name: <code>jenkins-dev</code>.</p>
+
+        <p><code>docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home --name jenkins-dev jenkins/dev:lts</code></p>
+
+        <p>At this point, you should be able to fire up your browser and point it to <a href="http://localhost:8080/">http://localhost:8080/</a>. It should be asking you for credentials. For our purposes this is as far as we go in the browser. We&acirc;&euro;&trade;ll be using the command line the rest of the way.</p>
+
+        <h3>Compile the plugin</h3>
+
+        <p>You should already have your (fixed) plugin code in a repository that you control. We&acirc;&euro;&trade;re going to simply use the Pull Request on the original plugin repo for this example.</p>
+
+        <p>We could do it two ways, either clone locally and then copy to the container &acirc;&euro;&ldquo; or we can execute a shell prompt and do everything on the container (If you reviewed the Jenkins Dockerfile, you know that it already has git installed). Of course we&acirc;&euro;&trade;re going to do the second.</p>
+
+        <p>Let&acirc;&euro;&trade;s execute a shell prompt.</p>
+
+        <p><code>docker exec -it jenkins-dev /bin/bash</code></p>
+
+        <p>You should see your terminal prompt change. Something like:</p>
+
+        <p><code>$ docker exec -it jenkins-dev bash jenkins@1eaaa7a9c5be:/$</code></p>
+
+        <p>We&acirc;&euro;&trade;re in!</p>
+
+        <p>(If you were curious about logging in to Jenkins in your browser, the contents of the <code>/var/jenkins_home/secrets/initialAdminPassword</code> file might be of some interest.)</p>
+
+        <p>Okay, now let&acirc;&euro;&trade;s get to our home directory and clone the repository and check out that particular pull request.</p>
+
+        <p><code>cd ~ git clone https://github.com/nemccarthy/stash-pullrequest-builder-plugin.git cd stash-pullrequest-builder-plugin git fetch origin pull/159/head:fix-root-url git checkout fix-root-url</code></p>
+
+        <p>Now that we have grabbed the pull request code, created a local branch for it, and then checked that code out &acirc;&euro;&ldquo; it&acirc;&euro;&trade;s time to compile. Since Jenkins plugins use Maven, that is as simple as the following command.</p>
+
+        <p><code>mvn clean install -DskipTests=true</code></p>
+
+        <p>Note: We&acirc;&euro;&trade;re skipping tests here for brevity.</p>
+
+        <p>Once the build has completed, verify that your plugin file was created.</p>
+
+        <p><code>jenkins@1eaaa7a9c5be:~/stash-pullrequest-builder-plugin$ ls target/*.hpi target/stash-pullrequest-builder.hpi</code></p>
+
+        <p>Now we need to get the hpi file from the container to our computer so that we can upload it to Jenkins.</p>
+
+        <h3>Install the plugin</h3>
+
+        <p>Okay, now you can either <code>exit</code> out of your shell prompt on the container or open a new terminal.</p>
+
+        <p>Now let&acirc;&euro;&trade;s copy.</p>
+
+        <p><code>docker cp jenkins-dev:/var/jenkins_home/stash-pullrequest-builder-plugin/target/stash-pullrequest-builder.hpi .</code></p>
+
+        <p>Open up Jenkins (the one where you need your updated plugin), navigate to "Manage Jenkins", then "Manage Plugins". Now click on the "Advanced" tab (https://your.jenkins.url/pluginManager/advanced) and scroll down until you get to the "Upload Plugin" section. Click on "Choose File", select your plugin (stash-pullrequest-builder.hpi), and then click the "Upload" button.</p>
+
+        <p>Finally, check the "Restart Jenkins when installation is complete and no jobs are running" check box so that Jenkins loads your updated plugin.</p>
+
+        <h3>Build your job</h3>
+
+        <p>At this point, any time you update a Pull Request on a repo connected to a Jenkins job (that uses this plugin), you should no longer be unwelcomly greeted with the "PLEASE SET JENKINS ROOT URL FROM GLOBAL CONFIGURATION" spam.</p>
+
+        <h3>Clean it up</h3>
+
+        <p>It is now safe to stop the container and optionally delete the image.</p>
+
+        <p><code>docker kill jenkins-dev docker rmi jenkins/dev:lts</code></p>
+
+        <h2>Post Mortem</h2>
+
+        <p>Containers are neat.</p>
+    </div>
+</body>
+</html>
