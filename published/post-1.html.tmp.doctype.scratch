@@ -1,0 +1,26 @@
+
+<html>
+<head>
+    <meta name="generator" content="HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+
+    <title>post-1</title>
+</head>
+
+<body>
+    <div id="wrap">
+        <h1>post-1</h1>
+
+        <h1>Post 1</h1>
+
+        <p>This is effectively the first post.</p>
+
+        <h2>Purpose</h2>
+
+        <p>The purpose of this post is to determine the effectiveness of CI/CD.</p>
+
+        <h2>Yes</h2>
+
+        <p>Yep, <code>ci/cd</code>.</p>
+    </div>
+</body>
+</html>
