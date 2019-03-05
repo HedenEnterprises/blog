@@ -22,3 +22,7 @@ cat "${target_tmp}" | grep -v "<\!DOCTYPE" > "${scratch_tmp}"
 # create our own DOCTYPE, and then pass the rest of the scratch file in
 echo "<!DOCTYPE html>" > "${target_tmp}"
 cat "${scratch_tmp}" >> "${target_tmp}"
+
+
+# clean up
+rm "${scratch_tmp}"
