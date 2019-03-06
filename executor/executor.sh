@@ -102,6 +102,7 @@ else
         pre-last-check)     ;;
         post-last-check)    ;;
         pre-rsync)          ;;
+        post-rsync)         ;;
         *)
             echo "Unknown publisher type"
             exit 1
