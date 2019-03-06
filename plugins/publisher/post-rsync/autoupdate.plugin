@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Plugin for keeping the publisher application itself up to date
+
+if ! mkdir tmp.autoupdate; then
+    echo "Can't create temporary space. Check permissions..."
+    exit 1
+fi
+
+
+cd tmp.autoupdate
+
+
+if ! git clone https://github.com/HedenEnterprises/blog.git; then
+    echo "Can't clone repo. How'd you install this the first time?"
+    exit 1
+fi
+
+
+cd blog
+
+
+/bin/bash ./publisher/install-publisher.sh --upgrade

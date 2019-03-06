@@ -181,3 +181,6 @@ rsync -a -v -h --delete --progress "published/" "${target}"
 
 popd
 popd
+
+
+execute_plugin post-rsync

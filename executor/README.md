@@ -41,7 +41,11 @@ is provided in sections below.
     * `pre-git-commit`
     * `pre-git-push`
 * `publisher`
-    * **none yet**
+    * `post-config-load`
+    * `pre-last-check`
+    * `post-last-check`
+    * `pre-rsync`
+    * `post-rsync`
 
 
 ## The plugin directory structure
@@ -178,6 +182,22 @@ repository's `published/` directory.
 Any alterations to the contents of the `published/` directory will end up in the
 `$target` directory, and any additional files placed in the `$target` directory
 will be destroyed after the rsync is complete.
+
+
+
+
+### post-rsync
+
+This is executed after rsyncing occurs. It is effectively the last execution of
+the publisher.
+
+##### arguments
+
+None.
+
+##### alterations
+
+None. *(Unless you're clever)*
 
 
 
