@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# adding this line to see if the autoupdate works in prod
+# ...really this time
+# ........really :|
 
 basedir=$(dirname $(readlink -f $0))
 
