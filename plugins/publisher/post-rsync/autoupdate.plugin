@@ -2,6 +2,10 @@
 
 # Plugin for keeping the publisher application itself up to date
 
+
+cd /var/www/publisher
+
+
 if ! mkdir tmp.autoupdate; then
     echo "Can't create temporary space. Check permissions..."
     exit 1
@@ -21,3 +25,7 @@ cd blog
 
 
 /bin/bash ./publisher/install-publisher.sh --upgrade
+
+
+cd /var/www/publisher
+rm tmp.autoupdate
