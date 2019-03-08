@@ -99,14 +99,6 @@ plugin execution, `9` is considered a **catastrophic failure** which results in
 publisher termination, and all other return codes are considered *warnings*.
 
 
-## Todo
-
-- [ ] Create a table of contents plugin
-- [ ] Allow plugins to be written in any language
-- [ ] Add a post-markdown plugin for fixing the extra `\n` after code blocks
-- [ ] Create a real watermark plugin (not just the meta.generator)
-
-
 ## Plugin references
 
 

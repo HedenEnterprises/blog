@@ -64,3 +64,24 @@ markdown files for template variable compliance.
 ```
 bash ./builder/install-git-hook.sh
 ```
+
+
+## Todo
+
+### Builder
+
+- [ ] Allow weird characters in template variables
+    - (Not *actually* weird, just things passed to sed as variable values)
+
+### Publisher
+
+- [ ] Make it work on more linices (linuxes?)
+- [ ] Add logrotate for bloglog
+- [ ] Interactive install?
+
+### Executor
+
+- [ ] Create a table of contents plugin
+- [ ] Allow plugins to be written in any language
+- [ ] Add a post-markdown plugin for fixing the extra `\n` after code blocks
+- [ ] Create a real watermark plugin (not just the meta.generator)
