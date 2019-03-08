@@ -1,4 +1,4 @@
-<!-- TITLE: Testing CI\/CD -->
+<!-- TITLE: Testing CI CD -->
 
 This is a perfectly formatted markdown file for testing purposes!
 
