@@ -1,6 +1,0 @@
-#!/bin/bash
-
-
-if [ -f "./builder/pre-commit.sh" ]; then
-    bash "./builder/pre-commit.sh"
-fi
